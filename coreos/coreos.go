@@ -1,12 +1,12 @@
 package coreos
 
 import (
-	"github.com/coreos/go-omaha/omaha"
 	"github.com/Sirupsen/logrus"
+	"github.com/coreos/go-omaha/omaha"
 	"strconv"
 )
 
-const CoreOs  = "{e96281a6-d1af-4bde-9a0a-97b76e56dc57}"
+const CoreOs = "{e96281a6-d1af-4bde-9a0a-97b76e56dc57}"
 
 type CoreOsUpdater struct {
 	Storage Storage
@@ -14,15 +14,14 @@ type CoreOsUpdater struct {
 
 type CoreOSVersion struct {
 	VersionId string
-	URL string
-	Name string
-	Hash string
+	URL       string
+	Name      string
+	Hash      string
 	Signature string
-	Size int
+	Size      int
 }
 
-
-func (cou CoreOsUpdater) noUpdateResponse() *omaha.Response{
+func (cou CoreOsUpdater) noUpdateResponse() *omaha.Response {
 	var response = omaha.NewResponse("update-controller")
 	response.DayStart.ElapsedSeconds = "0"
 	app := response.AddApp(CoreOs)
@@ -32,7 +31,7 @@ func (cou CoreOsUpdater) noUpdateResponse() *omaha.Response{
 	return response
 }
 
-func (cou CoreOsUpdater) updateResponse(appRequest *omaha.App) *omaha.Response{
+func (cou CoreOsUpdater) updateResponse(appRequest *omaha.App) *omaha.Response {
 	tracks := cou.Storage.GetTracks()
 
 	if version, ok := tracks[appRequest.Track]; ok {
@@ -68,11 +67,11 @@ func (cou CoreOsUpdater) updateResponse(appRequest *omaha.App) *omaha.Response{
 	}
 }
 
-func (cou CoreOsUpdater) GetNodes() map[string]string{
+func (cou CoreOsUpdater) GetNodes() map[string]string {
 	return cou.Storage.ListNodes()
 }
 
-func (cou CoreOsUpdater) UpdateVersion(coreOSVersion CoreOSVersion){
+func (cou CoreOsUpdater) UpdateVersion(coreOSVersion CoreOSVersion) {
 	cou.Storage.UpdateVersion(coreOSVersion)
 }
 
@@ -80,22 +79,21 @@ func (cou CoreOsUpdater) registerNode(app *omaha.App) {
 	cou.Storage.RegisterNode(app.MachineID, app.Track, app.OEM, app.Version)
 }
 
-func (cou CoreOsUpdater) UpdateTracks(tracks map[string] string){
+func (cou CoreOsUpdater) UpdateTracks(tracks map[string]string) {
 	cou.Storage.UpdateTracks(tracks)
 }
 
-func (cou CoreOsUpdater) GetTracks() map[string] string{
+func (cou CoreOsUpdater) GetTracks() map[string]string {
 	return cou.Storage.GetTracks()
 }
 
-
-func (cou CoreOsUpdater) CoreOsUpdate(request omaha.Request) *omaha.Response{
+func (cou CoreOsUpdater) CoreOsUpdate(request omaha.Request) *omaha.Response {
 	app := request.Apps[0]
 
 	cou.registerNode(app)
 
 	// Log events
-	for _ , event := range app.Events {
+	for _, event := range app.Events {
 		cou.Storage.LogEvent(app.MachineID, event.Type, event.Result, event.ErrorCode)
 	}
 
