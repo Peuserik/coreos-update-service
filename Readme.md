@@ -1,5 +1,5 @@
 # CoreOs update service
-
+[![Build Status](https://travis-ci.org/pegerto/coreos-update-service.svg?branch=master)](https://travis-ci.org/pegerto/coreos-update-service)
 
 
 Configure your Coreos hosts
